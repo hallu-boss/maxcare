@@ -1,5 +1,7 @@
 package com.maxcare.service.auth;
 
+import com.maxcare.common.ApiException;
+import com.maxcare.common.ErrorCode;
 import com.maxcare.domain.Language;
 import com.maxcare.domain.User;
 import com.maxcare.domain.UserRole;
@@ -34,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         System.out.println(email);
 
         if(userRepository.existsByEmail(email)) {
-            throw new RuntimeException("error!!!");
+            throw emailAlreadyExists();
         }
 
         User user = User.newPatient(email, "abc", "def", "ghi", LocalDate.of(2000, 1, 15), Language.PL);
@@ -48,5 +50,9 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return RegisterResponse.from(user);
+    }
+
+    private ApiException emailAlreadyExists() {
+        return new ApiException(ErrorCode.EMAIL_ALREADY_EXISTS);
     }
 }
